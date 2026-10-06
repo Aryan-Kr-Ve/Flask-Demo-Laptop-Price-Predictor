@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}About — Laptop Price Predictor{% endblock %}
+
+{% block content %}
+
+<section class="about-page">
+
+  <p class="doc-code">SPEC&ndash;03 / DOCUMENTATION</p>
+  <h1>What's under the hinge</h1>
+  <p class="hero-lede">
+    This tool wraps a regression model trained on real retail laptop listings.
+    Give it a configuration, it gives back a price — here's how that price gets made.
+  </p>
+
+  <div class="about-grid">
+
+    <div class="about-card">
+      <h2>The dataset</h2>
+      <p>
+        1,302 laptop listings, each with brand, form factor, CPU and GPU family,
+        RAM, storage split across HDD and SSD, screen size and resolution,
+        touchscreen and IPS flags, operating system, weight, and price. Screen
+        size and resolution are combined into pixels-per-inch during preprocessing,
+        since that's the feature that actually correlates with price — a 13&Prime;
+        4K panel and a 17&Prime; 4K panel are not the same display.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>The models</h2>
+      <p>
+        Ten regressors were benchmarked against the same features: linear,
+        ridge and lasso regression, k-nearest neighbours, decision tree,
+        random forest, extra trees, AdaBoost, gradient boosting and XGBoost.
+        A voting/stacking ensemble of the strongest performers came out on top
+        and is what runs behind this page, reaching roughly 89% R&sup2; on
+        held-out listings. Price is modelled on a log scale and exponentiated
+        back to rupees after prediction — prices don't move linearly with specs,
+        so the model doesn't either.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>This interface</h2>
+      <p>
+        The original project shipped as a Streamlit script. This front end
+        wraps the same pickled pipeline in a small Flask app: pages are
+        rendered server-side, and the configurator on the Predict page calls
+        a JSON endpoint — <code>POST /api/predict</code> — that returns a
+        price without a page reload. Dropdown values come from
+        <code>GET /api/options</code>, sourced from the same dataframe the
+        model was trained on, so the form can never offer a brand or CPU
+        the model hasn't seen.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>Reading a result</h2>
+      <p>
+        Treat the number as a market estimate, not a quote. The model has
+        never seen a live price feed — it's pattern-matching against listings
+        that may be a few years old, so absolute prices drift even where the
+        relative ranking between configurations stays sensible. A useful way
+        to use it: hold most fields fixed and change one — say, RAM — to see
+        how much of the price that one spec is actually carrying.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="about-footer">
+    <div class="credit">
+      <p class="doc-code">AUTHOR</p>
+      <p>Aryan Kumar Verma — MCA, 3rd Semester Mini Project</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('predict_page') }}">Try the configurator</a>
+  </div>
+
+</section>
+
+{% endblock %}

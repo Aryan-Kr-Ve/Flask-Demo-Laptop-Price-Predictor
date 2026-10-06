@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Laptop Price Predictor{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="doc-code">SPEC&ndash;01 / ESTIMATOR</p>
+    <h1>Sketch a laptop.<br>Read off the price.</h1>
+    <p class="hero-lede">
+      Pick a brand, a processor, a screen, a drive — the kind of configuration
+      you'd assemble on any retailer's build page. A regression model trained
+      on real listings reads the spec sheet back as a price, the same way an
+      engineer reads load off a blueprint.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('predict_page') }}" class="btn btn-primary">Start configuring</a>
+      <a href="{{ url_for('about') }}" class="btn btn-ghost">How the model works</a>
+    </div>
+  </div>
+
+  <div class="hero-diagram" aria-hidden="true">
+    <svg viewBox="0 0 460 360" xmlns="http://www.w3.org/2000/svg" class="laptop-svg">
+      <!-- screen -->
+      <rect x="90" y="30" width="280" height="180" rx="4" class="ln"/>
+      <rect x="104" y="44" width="252" height="152" rx="2" class="ln-dim"/>
+      <line x1="104" y1="70" x2="356" y2="70" class="ln-thin"/>
+      <line x1="104" y1="96" x2="300" y2="96" class="ln-thin"/>
+      <line x1="104" y1="118" x2="330" y2="118" class="ln-thin"/>
+      <!-- hinge -->
+      <line x1="90" y1="210" x2="370" y2="210" class="ln"/>
+      <!-- base -->
+      <path d="M60 210 L400 210 L430 260 L30 260 Z" class="ln"/>
+      <line x1="205" y1="210" x2="225" y2="210" class="ln-thick"/>
+
+      <!-- callout: CPU -->
+      <line x1="356" y1="96" x2="410" y2="96" class="leader"/>
+      <circle cx="410" cy="96" r="2.5" class="dot"/>
+      <text x="416" y="99" class="tag">CPU BRAND</text>
+
+      <!-- callout: RAM -->
+      <line x1="300" y1="118" x2="410" y2="140" class="leader"/>
+      <circle cx="410" cy="140" r="2.5" class="dot"/>
+      <text x="416" y="143" class="tag">RAM</text>
+
+      <!-- callout: display -->
+      <line x1="104" y1="70" x2="40" y2="60" class="leader"/>
+      <circle cx="40" cy="60" r="2.5" class="dot"/>
+      <text x="34" y="52" class="tag tag-end">DISPLAY / PPI</text>
+
+      <!-- callout: storage -->
+      <line x1="130" y1="235" x2="60" y2="290" class="leader"/>
+      <circle cx="60" cy="290" r="2.5" class="dot"/>
+      <text x="54" y="304" class="tag tag-end">HDD / SSD</text>
+
+      <!-- callout: GPU -->
+      <line x1="330" y1="235" x2="400" y2="290" class="leader"/>
+      <circle cx="400" cy="290" r="2.5" class="dot"/>
+      <text x="406" y="293" class="tag">GPU</text>
+
+      <!-- dimension line -->
+      <line x1="30" y1="285" x2="430" y2="285" class="dim"/>
+      <line x1="30" y1="279" x2="30" y2="291" class="dim"/>
+      <line x1="430" y1="279" x2="430" y2="291" class="dim"/>
+      <text x="230" y="345" text-anchor="middle" class="tag dim-label">12 SPECIFIED FEATURES &rarr; 1 PRICE</text>
+    </svg>
+  </div>
+</section>
+
+<section class="stats-strip">
+  <div class="stat">
+    <span class="stat-value">89%</span>
+    <span class="stat-label">R&sup2; on held-out listings</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">1,302</span>
+    <span class="stat-label">laptops in the training set</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">12</span>
+    <span class="stat-label">spec fields per prediction</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">10</span>
+    <span class="stat-label">regressors benchmarked</span>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <h2>How a spec becomes a price</h2>
+  <ol class="steps">
+    <li>
+      <span class="step-num">1</span>
+      <h3>Describe the machine</h3>
+      <p>Brand, form factor, CPU/GPU, RAM, storage, display size and resolution — the same fields a spec sheet lists.</p>
+    </li>
+    <li>
+      <span class="step-num">2</span>
+      <h3>Engineered features are derived</h3>
+      <p>Screen size and resolution are converted to pixels-per-inch, the field the model actually learned pricing patterns from.</p>
+    </li>
+    <li>
+      <span class="step-num">3</span>
+      <h3>The ensemble reads it back</h3>
+      <p>A stacking/voting regressor — the strongest of ten models tested — returns a price on a log scale, converted back to rupees.</p>
+    </li>
+  </ol>
+</section>
+
+{% endblock %}

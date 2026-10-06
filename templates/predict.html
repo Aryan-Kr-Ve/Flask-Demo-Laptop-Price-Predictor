@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Predict — Laptop Price Predictor{% endblock %}
+
+{% block content %}
+
+<section class="wizard-page">
+
+  <div class="wizard-head">
+    <p class="doc-code">SPEC&ndash;02 / CONFIGURATOR</p>
+    <h1>Configure the laptop</h1>
+    <p class="hero-lede small">Work through four groups of specs. The sheet on the right fills in as you go.</p>
+  </div>
+
+  <div class="step-rail" role="tablist" aria-label="Configuration steps">
+    <button class="step-dot is-active" data-step="1" type="button"><span>1</span>Identity</button>
+    <button class="step-dot" data-step="2" type="button"><span>2</span>Performance</button>
+    <button class="step-dot" data-step="3" type="button"><span>3</span>Build</button>
+    <button class="step-dot" data-step="4" type="button"><span>4</span>Display</button>
+  </div>
+
+  <div class="wizard-body">
+
+    <form id="specForm" class="wizard-form" novalidate>
+
+      <!-- STEP 1 : IDENTITY -->
+      <fieldset class="wizard-step is-active" data-step="1">
+        <legend>Identity</legend>
+
+        <label class="field">
+          <span>Brand</span>
+          <select name="company" required>
+            {% for c in options.company %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Form factor</span>
+          <select name="typeName" required>
+            {% for t in options.typeName %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Operating system</span>
+          <select name="os" required>
+            {% for o in options.os %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- STEP 2 : PERFORMANCE -->
+      <fieldset class="wizard-step" data-step="2">
+        <legend>Performance</legend>
+
+        <label class="field">
+          <span>Processor</span>
+          <select name="cpu" required>
+            {% for c in options.cpu %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Graphics</span>
+          <select name="gpu" required>
+            {% for g in options.gpu %}<option value="{{ g }}">{{ g }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>RAM</span>
+          <select name="ram" required>
+            {% for r in options.ram %}<option value="{{ r }}">{{ r }} GB</option>{% endfor %}
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- STEP 3 : BUILD -->
+      <fieldset class="wizard-step" data-step="3">
+        <legend>Build</legend>
+
+        <label class="field">
+          <span>HDD</span>
+          <select name="hdd" required>
+            {% for h in options.hdd %}<option value="{{ h }}">{{ "None" if h == 0 else (h|string + " GB") }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>SSD</span>
+          <select name="ssd" required>
+            {% for s in options.ssd %}<option value="{{ s }}">{{ "None" if s == 0 else (s|string + " GB") }}</option>{% endfor %}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Weight (kg)</span>
+          <input type="number" name="weight" min="0.5" max="6" step="0.1" value="1.8" required>
+        </label>
+
+        <div class="field field-toggles">
+          <label class="toggle">
+            <input type="checkbox" name="touchscreen">
+            <span>Touchscreen</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" name="ips">
+            <span>IPS panel</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- STEP 4 : DISPLAY -->
+      <fieldset class="wizard-step" data-step="4">
+        <legend>Display</legend>
+
+        <label class="field">
+          <span>Screen size — <output id="screenSizeOut">15.6</output>&Prime;</span>
+          <input type="range" name="screenSize" min="10" max="18" step="0.1" value="15.6" id="screenSizeInput">
+        </label>
+
+        <label class="field">
+          <span>Resolution</span>
+          <select name="resolution" required>
+            {% for res in options.resolution %}
+              <option value="{{ res }}" {{ "selected" if res == "1920x1080" else "" }}>{{ res }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </fieldset>
+
+    </form>
+
+    <!-- SPEC SHEET SUMMARY -->
+    <aside class="spec-sheet" aria-label="Configuration summary">
+      <p class="doc-code">SHEET</p>
+      <dl id="specSheet">
+        <div><dt>Brand</dt><dd data-field="company">—</dd></div>
+        <div><dt>Form factor</dt><dd data-field="typeName">—</dd></div>
+        <div><dt>OS</dt><dd data-field="os">—</dd></div>
+        <div><dt>Processor</dt><dd data-field="cpu">—</dd></div>
+        <div><dt>Graphics</dt><dd data-field="gpu">—</dd></div>
+        <div><dt>RAM</dt><dd data-field="ram">—</dd></div>
+        <div><dt>HDD</dt><dd data-field="hdd">—</dd></div>
+        <div><dt>SSD</dt><dd data-field="ssd">—</dd></div>
+        <div><dt>Weight</dt><dd data-field="weight">—</dd></div>
+        <div><dt>Touchscreen</dt><dd data-field="touchscreen">—</dd></div>
+        <div><dt>IPS</dt><dd data-field="ips">—</dd></div>
+        <div><dt>Screen</dt><dd data-field="screenSize">—</dd></div>
+        <div><dt>Resolution</dt><dd data-field="resolution">—</dd></div>
+      </dl>
+
+      <div class="result-box" id="resultBox">
+        <p class="result-label">Estimated price</p>
+        <p class="result-price" id="resultPrice">&mdash;</p>
+        <p class="result-note" id="resultNote">Fill in every step, then calculate.</p>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="wizard-nav">
+    <button type="button" class="btn btn-ghost" id="btnBack" disabled>Back</button>
+    <button type="button" class="btn btn-primary" id="btnNext">Next</button>
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/wizard.js') }}"></script>
+{% endblock %}
